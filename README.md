@@ -1,7 +1,7 @@
 # Notification Hub - Architecture & Implementation
 
 ## 1. System Overview
-The Notification Hub is a real-time communication system designed for organizational alerts. It allows administrators to dispatch targeted notifications (to all users or specific roles) which are delivered instantly via WebSockets. The system follows a **Domain-Driven Design (DDD)** approach, ensuring scalability and maintainability.
+The Notification Hub is a real-time, **fully containerized** communication system designed for organizational alerts. It allows administrators to dispatch targeted notifications (to all users or specific roles) delivered instantly via WebSockets. The system follows a **Domain-Driven Design (DDD)** approach and is orchestrated using **Docker Compose** for a seamless, production-ready environment.
 
 ### 1.1 Component Connection Diagram
 ```mermaid
@@ -11,6 +11,7 @@ graph TD
     Backend[FastAPI Backend]
     DB[(PostgreSQL)]
     WS[WebSocket Manager]
+    Docker[Docker Compose Orchestration]
 
     User <-->|HTTP/WS| Frontend
     Frontend <-->|REST API| Backend
@@ -18,6 +19,9 @@ graph TD
     Backend -->|Persist Data| DB
     Backend -->|Broadcast| WS
     WS -->|Push| Frontend
+    Docker -.->|Orchestrates| Frontend
+    Docker -.->|Orchestrates| Backend
+    Docker -.->|Orchestrates| DB
 ```
 
 ---
@@ -54,15 +58,17 @@ The system utilizes 3 core tables to manage notifications and user states:
 
 ---
 
-## 4. Tech Stack & Design Patterns
+## 4. Tech Stack & Infrastructure
+- **Orchestration**: **Docker Compose** (PostgreSQL, Backend, Frontend).
 - **Backend**: FastAPI (Async support), SQLAlchemy (ORM), Pydantic (Validation).
 - **Frontend**: React (Hooks), Radix UI (Primitives), Vanilla CSS (Premium Glassmorphism).
-- **Infrastructure**: Docker Compose, PostgreSQL.
-- **Design Pattern**: Domain-Driven Design (DDD) with clear separation of Entities, API Routes, and Infrastructure services.
+- **Design Pattern**: Domain-Driven Design (DDD).
 
 ---
 
 ## 5. Setup & Running
+The entire system is orchestrated for a one-command setup:
+
 1. Clone the repository.
-2. Run `docker-compose up --build`.
+2. Run `docker compose up --build`.
 3. Access the dashboard at `http://localhost:3000`.
