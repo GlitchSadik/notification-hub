@@ -4,8 +4,4 @@ sqlalchemy
 psycopg2-binary
 pydantic
 pydantic-settings
-python-dotenv
-alembic
-pytest
-httpx
 websockets

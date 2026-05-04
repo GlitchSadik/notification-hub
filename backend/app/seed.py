@@ -29,5 +29,3 @@ def seed_db():
     db.commit()
     db.close()
 
-if __name__ == "__main__":
-    seed_db()
