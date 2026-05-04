@@ -16,7 +16,11 @@ def get_roles(db: Session = Depends(get_db)):
 
 @router.post("/notifications")
 async def create_notification(data: schemas.NotificationCreate, db: Session = Depends(get_db)):
-    # 1. Create notification
+    """
+    Creates a notification and maps it to target users based on selected roles.
+    If no roles are provided, the notification is delivered to 'All' users.
+    """
+    # 1. Persist the core notification entity
     notif = models.Notification(title=data.title, message=data.message)
     if data.role_ids:
         roles = db.query(models.Role).filter(models.Role.id.in_(data.role_ids)).all()
@@ -24,7 +28,8 @@ async def create_notification(data: schemas.NotificationCreate, db: Session = De
     db.add(notif)
     db.flush()
 
-    # 2. Link to users
+    # 2. Map the notification to specific users via the Junction Table
+    # This design ensures each user has an independent read/unread status.
     users_query = db.query(models.User)
     if data.role_ids:
         users_query = users_query.filter(models.User.role_id.in_(data.role_ids))
@@ -35,7 +40,7 @@ async def create_notification(data: schemas.NotificationCreate, db: Session = De
     
     db.commit()
 
-    # 3. Broadcast real-time
+    # 3. Broadcast to all active WebSocket connections
     await manager.broadcast({
         "type": "NEW_NOTIFICATION",
         "data": {

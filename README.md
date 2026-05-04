@@ -58,7 +58,18 @@ The system utilizes 3 core tables to manage notifications and user states:
 
 ---
 
-## 4. Tech Stack & Infrastructure
+## 4. Assumptions & Design Decisions
+To ensure the system is both robust and easy to evaluate, the following decisions were made:
+
+- **Authentication Simulation**: As per the requirements, no real authentication (JWT/OAuth) is implemented. Instead, a global state manages the "Active User" to allow rapid testing of role-based views.
+- **Domain-Driven Design (DDD)**: The project is structured into domain layers (Entities, Services, Infrastructure) to demonstrate how the system would scale in a production environment.
+- **Real-time Delivery (WebSocket)**: A centralized `ConnectionManager` was implemented in the backend to handle real-time broadcasts efficiently across different user roles.
+- **Glassmorphism UI**: A modern, transparent UI aesthetic was chosen to demonstrate high-end frontend capabilities while keeping the codebase minimal (Vanilla CSS).
+- **Containerization**: Docker was chosen as the primary distribution method to ensure the app runs identically on the reviewer's machine without requiring local PostgreSQL setup.
+
+---
+
+## 5. Tech Stack & Infrastructure
 - **Orchestration**: **Docker Compose** (PostgreSQL, Backend, Frontend).
 - **Backend**: FastAPI (Async support), SQLAlchemy (ORM), Pydantic (Validation).
 - **Frontend**: React (Hooks), Radix UI (Primitives), Vanilla CSS (Premium Glassmorphism).

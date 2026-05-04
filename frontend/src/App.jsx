@@ -9,6 +9,7 @@ function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
+  // Fetch users and initialize the session on component mount
   useEffect(() => {
     api.getUsers()
       .then(data => {
@@ -19,6 +20,7 @@ function App() {
       .catch(err => console.error('Failed to fetch users:', err));
   }, []);
 
+  // Centralized notification fetcher, used during user swaps and real-time updates
   const fetchNotifications = useCallback(() => {
     if (currentUser) {
       api.getNotifications(currentUser.id).then(setNotifications);
@@ -29,9 +31,9 @@ function App() {
     fetchNotifications();
   }, [fetchNotifications]);
 
+  // Real-time synchronization: Re-fetch list when a relevant notification is broadcasted
   useWebSocket(useCallback((msg) => {
     if (msg.type === 'NEW_NOTIFICATION') {
-      // Check if current user is in target roles or if target_roles is empty (All)
       const isTarget = msg.data.target_roles.length === 0 || msg.data.target_roles.includes(currentUser?.role?.id);
       if (isTarget) {
         fetchNotifications();
