@@ -10,10 +10,13 @@ function App() {
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    api.getUsers().then(data => {
-      setUsers(data);
-      if (data.length > 0) setCurrentUser(data[0]);
-    });
+    api.getUsers()
+      .then(data => {
+        console.log('Users fetched:', data);
+        setUsers(data);
+        if (data.length > 0) setCurrentUser(data[0]);
+      })
+      .catch(err => console.error('Failed to fetch users:', err));
   }, []);
 
   const fetchNotifications = useCallback(() => {
@@ -44,9 +47,18 @@ function App() {
           <span>Switch User:</span>
           <select 
             value={currentUser?.id || ''} 
-            onChange={(e) => setCurrentUser(users.find(u => u.id == e.target.value))}
+            onChange={(e) => {
+              const val = e.target.value;
+              console.log('Switching to user ID:', val);
+              const user = users.find(u => String(u.id) === String(val));
+              if (user) {
+                console.log('User found:', user.username);
+                setCurrentUser(user);
+              }
+            }}
             style={{ marginBottom: 0, width: 'auto' }}
           >
+            {users.length === 0 && <option value="">Loading users...</option>}
             {users.map(u => (
               <option key={u.id} value={u.id}>{u.username} ({u.role.name})</option>
             ))}

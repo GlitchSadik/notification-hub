@@ -16,6 +16,8 @@ services:
     build: ./backend
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app
     environment:
       DATABASE_URL: postgresql://user:password@db:5432/notification_db
     depends_on:
@@ -27,6 +29,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
 
